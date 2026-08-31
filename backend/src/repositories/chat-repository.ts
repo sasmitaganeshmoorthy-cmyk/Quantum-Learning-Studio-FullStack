@@ -1,8 +1,6 @@
-import 'server-only';
-
-import type { CompanionApiMessage, LearnerProgressDto } from '@/lib/api/companion-types';
-import type { CompanionCourseContext, CompanionLevel } from '@/lib/quantum-companion';
-import { getMongoDatabase } from '@/lib/server/mongodb';
+import type { CompanionApiMessage, LearnerProgressDto } from '../types/companion';
+import type { CompanionCourseContext, CompanionLevel } from '../domain/quantum-companion';
+import { getMongoDatabase } from '../config/mongodb';
 
 interface StoredChatSession {
   sessionId: string;
@@ -101,4 +99,3 @@ export async function saveLearnerProgress(progress: LearnerProgressDto): Promise
   );
   return true;
 }
-

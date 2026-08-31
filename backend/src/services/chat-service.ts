@@ -1,9 +1,7 @@
-import 'server-only';
-
-import type { CompanionApiMessage, CompanionChatRequest, CompanionChatResponse } from '@/lib/api/companion-types';
-import { buildQuantumCompanionResponse } from '@/lib/quantum-companion';
-import { requestExternalAi } from '@/lib/server/ai-provider';
-import { appendChatExchange } from '@/lib/server/chat-repository';
+import type { CompanionApiMessage, CompanionChatRequest, CompanionChatResponse } from '../types/companion';
+import { buildQuantumCompanionResponse } from '../domain/quantum-companion';
+import { requestExternalAi } from './ai-provider';
+import { appendChatExchange } from '../repositories/chat-repository';
 
 export async function answerCompanionQuestion(request: CompanionChatRequest): Promise<CompanionChatResponse> {
   const startedAt = Date.now();
@@ -20,10 +18,6 @@ export async function answerCompanionQuestion(request: CompanionChatRequest): Pr
   const source = external?.source ?? 'local';
   const timestamp = new Date().toISOString();
   let persisted = false;
-  console.log('Chat persistence request:', {
-    persistHistory: request.persistHistory,
-    sessionId: request.sessionId,
-  });
   if (request.persistHistory && request.sessionId) {
     const messages: CompanionApiMessage[] = [
       {
@@ -48,4 +42,3 @@ export async function answerCompanionQuestion(request: CompanionChatRequest): Pr
 
   return { answer, source, latencyMs: Date.now() - startedAt, persisted };
 }
-

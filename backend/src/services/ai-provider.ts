@@ -1,7 +1,5 @@
-import 'server-only';
-
-import type { CompanionApiMessage } from '@/lib/api/companion-types';
-import type { CompanionCourseContext, CompanionLevel } from '@/lib/quantum-companion';
+import type { CompanionApiMessage } from '../types/companion';
+import type { CompanionCourseContext, CompanionLevel } from '../domain/quantum-companion';
 
 interface ProviderResult {
   answer: string;
@@ -98,4 +96,3 @@ export async function requestExternalAi(payload: ProviderPayload): Promise<Provi
     clearTimeout(timeout);
   }
 }
-

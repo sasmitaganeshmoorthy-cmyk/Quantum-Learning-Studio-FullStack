@@ -1,11 +1,5 @@
-import 'server-only';
-
 import { setServers } from 'node:dns';
 import type { Db, MongoClient as MongoClientType } from 'mongodb';
-
-const uri = process.env.MONGODB_URI;
-const databaseName =
-  process.env.MONGODB_DB ?? 'quantum_learning_studio';
 
 declare global {
   var quantumMongoClientPromise:
@@ -26,6 +20,7 @@ function configureMongoDns() {
 }
 
 async function createClientPromise(): Promise<MongoClientType> {
+  const uri = process.env.MONGODB_URI;
   if (!uri) {
     throw new Error('MONGODB_URI is not configured');
   }
@@ -45,10 +40,11 @@ async function createClientPromise(): Promise<MongoClientType> {
 }
 
 export function isMongoConfigured(): boolean {
-  return Boolean(uri);
+  return Boolean(process.env.MONGODB_URI);
 }
 
 export async function getMongoDatabase(): Promise<Db | null> {
+  const uri = process.env.MONGODB_URI;
   if (!uri) return null;
 
   if (!global.quantumMongoClientPromise) {
@@ -60,5 +56,5 @@ export async function getMongoDatabase(): Promise<Db | null> {
   }
 
   const client = await global.quantumMongoClientPromise;
-  return client.db(databaseName);
+  return client.db(process.env.MONGODB_DB ?? 'quantum_learning_studio');
 }
