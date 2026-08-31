@@ -1,0 +1,1441 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-primary-color: var(--primary-color);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary-color: var(--secondary-color);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border-color: var(--border-color);
+  --color-success-color: var(--success-color);
+  --color-warning-color: var(--warning-color);
+  --color-error-color: var(--error-color);
+  --color-info-color: var(--info-color);
+  --color-focus-ring: var(--focus-ring);
+
+  --animate-standard: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-slow: 280ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  --radius-small: 6px;
+  --radius-medium: 10px;
+  --radius-large: 16px;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-body-small: 0.875rem;
+  --text-body-small--line-height: 1.25rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.5rem;
+  --text-body-large: 1.125rem;
+  --text-body-large--line-height: 1.75rem;
+}
+
+:root {
+  /* Keep design-system spacing outside Tailwind's reserved --spacing-* namespace.
+     Using names such as --spacing-xl changes utilities like max-w-xl in Tailwind 4. */
+  --ds-space-none: 0px;
+  --ds-space-xs: 4px;
+  --ds-space-sm: 8px;
+  --ds-space-md: 12px;
+  --ds-space-lg: 16px;
+  --ds-space-xl: 20px;
+  --ds-space-2xl: 24px;
+  --ds-space-3xl: 32px;
+  --ds-space-4xl: 40px;
+  --ds-space-5xl: 48px;
+  --ds-space-6xl: 64px;
+  --ds-space-7xl: 80px;
+  --ds-space-8xl: 96px;
+
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-hover: #f1f5f9;
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary-color: #0369a1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: #cbd5e1;
+  --success-color: #047857;
+  --warning-color: #b45309;
+  --error-color: #b91c1c;
+  --info-color: #0369a1;
+  --focus-ring: #6366f1;
+  color-scheme: light;
+}
+
+.dark {
+  --background: #020617;
+  --surface: #0f172a;
+  --surface-hover: #1e293b;
+  --primary-color: #a5b4fc;
+  --primary-hover: #c7d2fe;
+  --secondary-color: #7dd3fc;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --border-color: #475569;
+  --success-color: #6ee7b7;
+  --warning-color: #fcd34d;
+  --error-color: #fca5a5;
+  --info-color: #7dd3fc;
+  --focus-ring: #818cf8;
+  color-scheme: dark;
+}
+
+/* Light semantic colors use dark foregrounds in the dark theme. */
+.dark .bg-primary-color.text-white,
+.dark .bg-success-color.text-white,
+.dark .bg-warning-color.text-white,
+.dark .bg-error-color.text-white,
+.dark .bg-text-secondary.text-white {
+  color: #020617;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  overflow-x: clip;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  overflow-x: clip;
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+[role="button"],
+input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  min-height: 44px;
+}
+
+nav a,
+header a,
+a[class*="rounded-"] {
+  min-height: 44px;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled),
+a[href],
+select:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+li,
+td,
+th {
+  overflow-wrap: anywhere;
+}
+
+.app-viewport {
+  height: 100vh;
+  height: 100dvh;
+}
+
+.page-container {
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+.safe-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+.scrollbar-hidden {
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (min-width: 768px) {
+  .page-container {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-container {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .page-container {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-large);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Focus visible styles */
+*:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary-color) 25%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    transition:
+      color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 180ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 180ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  button:not(:disabled):active,
+  a[href]:active {
+    transform: translateY(1px);
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  *:focus-visible {
+    outline: 3px solid CanvasText;
+  }
+}
+
+/* Shared cinematic application surfaces */
+.app-cinematic-hero {
+  --app-pointer-x: 72%;
+  --app-pointer-y: 42%;
+  --app-parallax-x: 0px;
+  --app-parallax-y: 0px;
+  --app-tilt-x: 0deg;
+  --app-tilt-y: 0deg;
+  --app-accent: 34 211 238;
+  position: relative;
+  isolation: isolate;
+  min-height: 360px;
+  overflow: hidden;
+  border: 1px solid rgb(var(--app-accent) / 0.24);
+  border-radius: 1.35rem;
+  background: #020617;
+  box-shadow: 0 28px 80px rgb(2 6 23 / 0.24), inset 0 1px 0 rgb(255 255 255 / 0.08);
+  color: #f8fafc;
+  perspective: 1100px;
+}
+
+.app-cinematic-hero--violet { --app-accent: 167 139 250; }
+.app-cinematic-hero--amber { --app-accent: 251 191 36; }
+.app-cinematic-hero--compact { min-height: 290px; }
+
+.app-cinematic-hero__image {
+  position: absolute;
+  inset: -20px;
+  z-index: -5;
+  transform: translate3d(var(--app-parallax-x), var(--app-parallax-y), 0) scale(1.065);
+  transition: transform 650ms cubic-bezier(0.2, 0.7, 0, 1);
+  will-change: transform;
+}
+
+.app-cinematic-hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -4;
+  background:
+    linear-gradient(90deg, rgb(2 6 23 / 0.97) 0%, rgb(2 6 23 / 0.86) 44%, rgb(2 6 23 / 0.32) 76%, rgb(2 6 23 / 0.18)),
+    linear-gradient(180deg, rgb(2 6 23 / 0.12), rgb(2 6 23 / 0.74));
+}
+
+.app-cinematic-hero__grid {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgb(var(--app-accent) / 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--app-accent) / 0.12) 1px, transparent 1px);
+  background-size: 58px 58px;
+  mask-image: linear-gradient(90deg, black, transparent 82%);
+}
+
+.app-cinematic-hero__light {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(circle 300px at var(--app-pointer-x) var(--app-pointer-y), rgb(var(--app-accent) / 0.22), transparent 72%);
+  mix-blend-mode: screen;
+}
+
+.app-cinematic-hero__content {
+  display: flex;
+  min-height: inherit;
+  width: min(100%, 790px);
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  transform: rotateX(var(--app-tilt-x)) rotateY(var(--app-tilt-y));
+  transform-origin: left center;
+  transition: transform 500ms cubic-bezier(0.2, 0.7, 0, 1);
+}
+
+.app-cinematic-hero__eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 34px;
+  align-items: center;
+  gap: 0.6rem;
+  border: 1px solid rgb(var(--app-accent) / 0.34);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  background: rgb(2 6 23 / 0.5);
+  color: rgb(var(--app-accent));
+  font-size: 0.67rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
+.app-cinematic-hero__eyebrow span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgb(var(--app-accent));
+  box-shadow: 0 0 14px rgb(var(--app-accent));
+}
+
+.app-cinematic-hero h1 {
+  max-width: 760px;
+  margin-top: 1rem;
+  font-size: clamp(2.15rem, 5vw, 4.65rem);
+  font-weight: 950;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+  text-wrap: balance;
+  text-shadow: 0 16px 50px rgb(0 0 0 / 0.55);
+}
+
+.app-cinematic-hero p {
+  max-width: 650px;
+  margin-top: 1rem;
+  color: #cbd5e1;
+  font-size: clamp(0.92rem, 1.5vw, 1.08rem);
+  line-height: 1.7;
+}
+
+.app-cinematic-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.app-hero-primary,
+.app-hero-secondary {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 0.8rem;
+  padding-inline: 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.app-hero-primary {
+  background: linear-gradient(135deg, #e0f2fe, rgb(var(--app-accent)));
+  color: #020617;
+  box-shadow: 0 14px 36px rgb(var(--app-accent) / 0.22);
+}
+
+.app-hero-secondary {
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(255 255 255 / 0.08);
+  color: #f8fafc;
+  backdrop-filter: blur(12px);
+}
+
+.app-hero-primary:hover,
+.app-hero-secondary:hover {
+  border-color: rgb(var(--app-accent) / 0.65);
+  transform: translateY(-2px);
+}
+
+.app-cinematic-hero__metrics {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: flex;
+  max-width: calc(100% - 2.5rem);
+  gap: 0.5rem;
+}
+
+.app-hero-metric {
+  min-width: 105px;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 0.85rem;
+  padding: 0.7rem 0.85rem;
+  background: rgb(2 6 23 / 0.62);
+  backdrop-filter: blur(14px);
+}
+
+.app-hero-metric strong,
+.app-hero-metric span { display: block; }
+.app-hero-metric strong { color: #f8fafc; font-size: 0.9rem; }
+.app-hero-metric span { color: #94a3b8; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+
+.app-depth-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+  background: color-mix(in srgb, var(--surface) 93%, transparent);
+  box-shadow: 0 18px 55px rgb(15 23 42 / 0.08);
+  backdrop-filter: blur(18px);
+  transform-style: preserve-3d;
+}
+
+.app-depth-card::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 85% 0%, rgb(99 102 241 / 0.12), transparent 34%);
+  content: "";
+}
+
+.app-interactive-card {
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-interactive-card:hover {
+    border-color: rgb(99 102 241 / 0.48);
+    box-shadow: 0 24px 65px rgb(15 23 42 / 0.14);
+    transform: translateY(-5px) rotateX(1deg);
+  }
+}
+
+@media (max-width: 767px) {
+  .app-cinematic-hero,
+  .app-cinematic-hero--compact { min-height: 430px; }
+  .app-cinematic-hero__scrim {
+    background: linear-gradient(180deg, rgb(2 6 23 / 0.42), rgb(2 6 23 / 0.94) 62%, #020617);
+  }
+  .app-cinematic-hero__content {
+    justify-content: flex-end;
+    padding: 1.35rem 1.1rem 7rem;
+    transform: none;
+  }
+  .app-cinematic-hero__image { inset: -8px; transform: scale(1.04); }
+  .app-cinematic-hero__metrics { right: 1rem; bottom: 1rem; left: 1rem; overflow-x: auto; }
+  .app-hero-metric { min-width: 96px; flex: 1 0 auto; }
+  .app-cinematic-hero__actions > * { flex: 1 1 145px; }
+}
+
+@media (prefers-reduced-motion: reduce), (pointer: coarse) {
+  .app-cinematic-hero__image,
+  .app-cinematic-hero__content { transform: none; }
+  .app-cinematic-hero__light { display: none; }
+}
+
+.lab-command-header {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 86px;
+  background: #020617;
+  color: #f8fafc;
+}
+
+.lab-command-header__image {
+  position: absolute;
+  inset: -18px -12px -18px 36%;
+  z-index: -3;
+  opacity: 0.72;
+  transform: scale(1.04);
+  transition: transform 800ms cubic-bezier(0.2, 0.7, 0, 1), filter 400ms ease;
+}
+
+.lab-command-header:hover .lab-command-header__image {
+  filter: saturate(1.15) brightness(1.08);
+  transform: scale(1.075) translateX(-6px);
+}
+
+.lab-command-header__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(90deg, #020617 0%, rgb(2 6 23 / 0.94) 38%, rgb(2 6 23 / 0.6) 72%, rgb(2 6 23 / 0.78)),
+    linear-gradient(180deg, transparent, rgb(2 6 23 / 0.6));
+}
+
+.lab-command-header select {
+  border-color: rgb(103 232 249 / 0.24);
+  background: rgb(2 6 23 / 0.68);
+  color: #e2e8f0;
+  backdrop-filter: blur(12px);
+}
+
+.lab-command-header select option {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+@media (max-width: 767px) {
+  .lab-command-header__image { inset: 0; opacity: 0.4; }
+  .lab-command-header__scrim { background: rgb(2 6 23 / 0.82); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-command-header__image,
+  .lab-command-header:hover .lab-command-header__image { transform: none; }
+}
+
+/* KaTeX custom styles */
+.math-block {
+  overflow-x: auto;
+  padding: var(--ds-space-sm);
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-medium);
+  margin: var(--ds-space-md) 0;
+}
+
+/* Cinematic landing experience */
+.quantum-landing {
+  isolation: isolate;
+  overflow: clip;
+}
+
+.quantum-nav {
+  border-bottom: 1px solid rgb(255 255 255 / 0.1);
+  background: linear-gradient(180deg, rgb(2 6 15 / 0.88), rgb(2 6 15 / 0.54));
+  box-shadow: 0 16px 50px rgb(0 0 0 / 0.12);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.quantum-logo {
+  border: 1px solid rgb(103 232 249 / 0.4);
+  background:
+    radial-gradient(circle at 32% 20%, rgb(255 255 255 / 0.48), transparent 22%),
+    linear-gradient(145deg, #2563eb, #06b6d4 62%, #14b8a6);
+  box-shadow: 0 0 28px rgb(34 211 238 / 0.34), inset 0 1px 0 rgb(255 255 255 / 0.4);
+}
+
+.quantum-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #cbd5e1;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.quantum-nav-link:hover {
+  color: #fff;
+}
+
+.quantum-icon-button,
+.quantum-nav-cta {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.8rem;
+}
+
+.quantum-icon-button {
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: rgb(255 255 255 / 0.07);
+  color: #e2e8f0;
+}
+
+.quantum-icon-button:hover {
+  border-color: rgb(103 232 249 / 0.45);
+  background: rgb(34 211 238 / 0.1);
+  color: #fff;
+}
+
+.quantum-nav-cta {
+  gap: 0.5rem;
+  padding-inline: 1rem;
+  background: #e0f2fe;
+  color: #06101d;
+  font-size: 0.825rem;
+  font-weight: 900;
+  box-shadow: 0 8px 30px rgb(14 165 233 / 0.18);
+}
+
+.quantum-nav-cta:hover {
+  background: #fff;
+  box-shadow: 0 10px 34px rgb(34 211 238 / 0.34);
+  transform: translateY(-1px);
+}
+
+.quantum-hero {
+  --pointer-x: 62%;
+  --pointer-y: 42%;
+  --parallax-x: 0px;
+  --parallax-y: 0px;
+  --panel-rotate-x: 0deg;
+  --panel-rotate-y: 0deg;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100svh;
+  background: #02060d;
+  color: #fff;
+}
+
+.quantum-hero-image {
+  position: absolute;
+  inset: -2rem;
+  transform: translate3d(var(--parallax-x), var(--parallax-y), 0) scale(1.07);
+  transition: transform 650ms cubic-bezier(0.2, 0.7, 0, 1);
+  will-change: transform;
+}
+
+.quantum-hero-image::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(2 6 15 / 0.98) 0%, rgb(2 6 15 / 0.9) 31%, rgb(2 6 15 / 0.36) 63%, rgb(2 6 15 / 0.22));
+  content: "";
+}
+
+.quantum-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgb(2 6 15 / 0.25), transparent 36%, rgb(2 6 15 / 0.92)),
+    radial-gradient(circle at 70% 45%, rgb(6 182 212 / 0.12), transparent 34%);
+}
+
+.quantum-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  background-image:
+    linear-gradient(rgb(125 211 252 / 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(125 211 252 / 0.08) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, transparent, black 20%, black 78%, transparent);
+  transform: perspective(520px) rotateX(66deg) scale(1.65) translateY(36%);
+  transform-origin: bottom;
+}
+
+.quantum-cursor-light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle 260px at var(--pointer-x) var(--pointer-y), rgb(34 211 238 / 0.17), transparent 72%);
+  mix-blend-mode: screen;
+}
+
+.quantum-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 36px;
+  border: 1px solid rgb(103 232 249 / 0.26);
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  background: rgb(8 47 73 / 0.32);
+  color: #bae6fd;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(14px);
+}
+
+.quantum-kicker-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22d3ee;
+  box-shadow: 0 0 14px #22d3ee;
+  animation: quantum-pulse 2s ease-in-out infinite;
+}
+
+.quantum-display {
+  max-width: 850px;
+  font-size: clamp(3rem, 7.5vw, 7.25rem);
+  font-weight: 950;
+  letter-spacing: -0.065em;
+  line-height: 0.9;
+  text-wrap: balance;
+}
+
+.quantum-display span {
+  display: block;
+  padding-bottom: 0.08em;
+  background: linear-gradient(95deg, #fff 0%, #a5f3fc 40%, #38bdf8 78%, #818cf8 100%);
+  background-clip: text;
+  color: transparent;
+}
+
+.quantum-primary-button,
+.quantum-secondary-button {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border-radius: 0.9rem;
+  padding-inline: 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+}
+
+.quantum-primary-button {
+  background: linear-gradient(135deg, #e0f2fe, #67e8f9);
+  color: #06111d;
+  box-shadow: 0 16px 42px rgb(34 211 238 / 0.25);
+}
+
+.quantum-primary-button:hover {
+  box-shadow: 0 18px 54px rgb(34 211 238 / 0.42);
+  transform: translateY(-2px);
+}
+
+.quantum-secondary-button {
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: rgb(2 6 23 / 0.48);
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+
+.quantum-secondary-button:hover {
+  border-color: rgb(103 232 249 / 0.52);
+  background: rgb(8 47 73 / 0.5);
+}
+
+.quantum-state-panel {
+  position: relative;
+  width: min(100%, 510px);
+  min-height: 540px;
+  margin-inline: auto;
+  border: 1px solid rgb(125 211 252 / 0.3);
+  border-radius: 2rem;
+  padding: 1.25rem;
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgb(15 23 42 / 0.78), rgb(2 6 23 / 0.56)),
+    radial-gradient(circle at top, rgb(34 211 238 / 0.2), transparent 48%);
+  box-shadow: 0 34px 100px rgb(0 0 0 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.15), 0 0 80px rgb(14 165 233 / 0.08);
+  backdrop-filter: blur(22px) saturate(140%);
+  transform: perspective(1100px) rotateX(var(--panel-rotate-x)) rotateY(var(--panel-rotate-y));
+  transform-style: preserve-3d;
+  transition: transform 380ms cubic-bezier(0.2, 0.7, 0, 1), border-color 220ms ease;
+  will-change: transform;
+}
+
+.quantum-state-panel::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, rgb(255 255 255 / 0.12), transparent 30%, transparent 70%, rgb(34 211 238 / 0.08));
+  content: "";
+  pointer-events: none;
+}
+
+.quantum-panel-topline,
+.quantum-code-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #94a3b8;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.quantum-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: #a7f3d0;
+}
+
+.quantum-live i,
+.quantum-code-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 12px #34d399;
+}
+
+.quantum-orbit-stage {
+  position: relative;
+  display: grid;
+  height: 340px;
+  place-items: center;
+  transform: translateZ(48px);
+}
+
+.quantum-orbit {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border: 1px solid rgb(103 232 249 / 0.42);
+  border-radius: 50%;
+  box-shadow: inset 0 0 26px rgb(34 211 238 / 0.08), 0 0 22px rgb(34 211 238 / 0.08);
+}
+
+.quantum-orbit-one {
+  transform: rotateX(68deg) rotateZ(8deg);
+  animation: quantum-orbit-one 9s linear infinite;
+}
+
+.quantum-orbit-two {
+  transform: rotateY(68deg) rotateZ(42deg);
+  animation: quantum-orbit-two 12s linear infinite reverse;
+}
+
+.quantum-orbit-three {
+  width: 195px;
+  height: 195px;
+  border-style: dashed;
+  opacity: 0.55;
+  animation: quantum-spin 14s linear infinite;
+}
+
+.quantum-state-core {
+  display: grid;
+  width: 118px;
+  height: 118px;
+  place-items: center;
+  border: 1px solid rgb(165 243 252 / 0.75);
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 27%, #fff, #67e8f9 12%, #0ea5e9 38%, #1e3a8a 70%, #020617);
+  color: #fff;
+  font-family: Georgia, serif;
+  font-size: 3.6rem;
+  font-style: italic;
+  box-shadow: 0 0 30px rgb(103 232 249 / 0.5), 0 0 90px rgb(14 165 233 / 0.3), inset -12px -18px 30px rgb(2 6 23 / 0.55);
+  animation: quantum-float 4.8s ease-in-out infinite;
+}
+
+.quantum-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 18px 5px #22d3ee;
+}
+
+.particle-one { transform: translate(112px, -70px); }
+.particle-two { transform: translate(-98px, 82px) scale(0.7); }
+
+.quantum-step {
+  display: grid;
+  min-height: 40px;
+  place-items: center;
+  border: 1px solid rgb(148 163 184 / 0.2);
+  border-radius: 0.7rem;
+  background: rgb(15 23 42 / 0.62);
+  color: #64748b;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.quantum-step.is-active {
+  border-color: rgb(34 211 238 / 0.55);
+  background: rgb(8 145 178 / 0.24);
+  color: #cffafe;
+  box-shadow: inset 0 0 18px rgb(34 211 238 / 0.08);
+}
+
+.quantum-equation {
+  min-height: 54px;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 0.8rem;
+  padding: 0.9rem 1rem;
+  background: rgb(2 6 23 / 0.72);
+  color: #a5f3fc;
+  font-family: Georgia, serif;
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  text-align: center;
+}
+
+.quantum-pointer-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.quantum-scroll-cue {
+  position: absolute;
+  z-index: 12;
+  bottom: 1.2rem;
+  left: 50%;
+  display: none;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.6rem;
+  color: #94a3b8;
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.quantum-scroll-cue span {
+  width: 1px;
+  height: 26px;
+  background: linear-gradient(#67e8f9, transparent);
+  animation: quantum-scroll 2s ease-in-out infinite;
+}
+
+.quantum-section {
+  position: relative;
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+}
+
+.quantum-section-dark {
+  background:
+    radial-gradient(circle at 12% 8%, rgb(8 145 178 / 0.12), transparent 28%),
+    linear-gradient(180deg, #02060d, #050b16);
+  color: #fff;
+}
+
+.quantum-section-heading {
+  display: grid;
+  align-items: end;
+  gap: 1.5rem;
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+.quantum-section-heading h2 {
+  max-width: 850px;
+  font-size: clamp(2rem, 5vw, 4.75rem);
+  font-weight: 950;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.quantum-section-heading > p {
+  max-width: 570px;
+  color: #94a3b8;
+  line-height: 1.75;
+}
+
+.quantum-eyebrow {
+  margin-bottom: 0.65rem;
+  color: #67e8f9;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.quantum-image-card {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --shine-x: 50%;
+  --shine-y: 50%;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(125 211 252 / 0.18);
+  border-radius: 2rem;
+  box-shadow: 0 28px 80px rgb(0 0 0 / 0.32);
+  transform: perspective(1100px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.2, 0.7, 0, 1), border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.quantum-image-card:hover {
+  border-color: rgb(103 232 249 / 0.48);
+  box-shadow: 0 36px 100px rgb(0 0 0 / 0.42), 0 0 54px rgb(8 145 178 / 0.1);
+}
+
+.quantum-image-card::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(circle 280px at var(--shine-x) var(--shine-y), rgb(255 255 255 / 0.14), transparent 72%);
+  content: "";
+  pointer-events: none;
+}
+
+.quantum-image-card > img {
+  transition: transform 800ms cubic-bezier(0.2, 0.7, 0, 1), filter 500ms ease;
+}
+
+.quantum-image-card:hover > img {
+  filter: saturate(1.16) contrast(1.04);
+  transform: scale(1.045);
+}
+
+.quantum-image-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgb(2 6 23 / 0.05), rgb(2 6 23 / 0.24) 34%, rgb(2 6 23 / 0.96) 88%);
+}
+
+.quantum-card-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  min-height: 520px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  transform: translateZ(36px);
+}
+
+.quantum-card-number {
+  align-self: flex-end;
+  color: rgb(255 255 255 / 0.52);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.quantum-card-icon,
+.quantum-feature-icon {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  place-items: center;
+  border: 1px solid rgb(103 232 249 / 0.28);
+  border-radius: 1rem;
+  background: rgb(8 47 73 / 0.52);
+  color: #a5f3fc;
+  backdrop-filter: blur(12px);
+}
+
+.quantum-card-icon {
+  margin-bottom: 1.25rem;
+}
+
+.quantum-card-icon svg,
+.quantum-feature-icon svg {
+  width: 23px;
+}
+
+.quantum-card-content h3 {
+  max-width: 540px;
+  margin-bottom: 0.8rem;
+  color: #fff;
+  font-size: clamp(1.55rem, 3.4vw, 2.7rem);
+  font-weight: 950;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.quantum-card-content > div > p:not(.quantum-eyebrow) {
+  max-width: 520px;
+  color: #cbd5e1;
+  line-height: 1.65;
+}
+
+.quantum-text-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  color: #a5f3fc;
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+.quantum-text-link:hover {
+  color: #fff;
+  gap: 0.75rem;
+}
+
+.quantum-feature-card {
+  min-height: 310px;
+  border: 1px solid var(--border-color);
+  border-radius: 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, transparent), color-mix(in srgb, var(--background) 88%, transparent));
+  box-shadow: 0 18px 50px rgb(15 23 42 / 0.06);
+}
+
+.quantum-feature-card:hover {
+  border-color: color-mix(in srgb, var(--primary-color) 50%, var(--border-color));
+  box-shadow: 0 22px 64px rgb(14 165 233 / 0.1);
+  transform: translateY(-6px);
+}
+
+.quantum-feature-icon {
+  margin-bottom: 2.6rem;
+  background: color-mix(in srgb, var(--primary-color) 12%, var(--surface));
+  color: var(--primary-color);
+}
+
+.quantum-feature-card h3 {
+  margin-bottom: 0.8rem;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.quantum-feature-card > p:last-child {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.quantum-code-section {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 82% 20%, rgb(14 165 233 / 0.15), transparent 34%),
+    linear-gradient(135deg, #020617, #07111f 58%, #03131a);
+}
+
+.quantum-framework-pill {
+  border: 1px solid rgb(125 211 252 / 0.2);
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  background: rgb(8 47 73 / 0.34);
+  color: #bae6fd;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.quantum-code-window {
+  overflow: hidden;
+  border: 1px solid rgb(125 211 252 / 0.25);
+  border-radius: 1.5rem;
+  background: rgb(2 6 23 / 0.88);
+  box-shadow: 0 30px 90px rgb(0 0 0 / 0.38), 0 0 80px rgb(8 145 178 / 0.08);
+}
+
+.quantum-window-bar,
+.quantum-code-tabs,
+.quantum-code-status {
+  border-bottom: 1px solid rgb(148 163 184 / 0.14);
+}
+
+.quantum-window-bar {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-inline: 1rem;
+  background: rgb(15 23 42 / 0.68);
+  color: #94a3b8;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.quantum-window-bar i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fb7185;
+}
+
+.quantum-window-bar i:nth-child(2) { background: #fbbf24; }
+.quantum-window-bar i:nth-child(3) { background: #34d399; }
+
+.quantum-code-tabs {
+  display: flex;
+  gap: 0.3rem;
+  overflow-x: auto;
+  padding: 0.55rem;
+}
+
+.quantum-code-tabs button {
+  min-height: 40px;
+  border-radius: 0.6rem;
+  padding-inline: 0.9rem;
+  color: #94a3b8;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.quantum-code-tabs button.is-active {
+  background: rgb(14 165 233 / 0.16);
+  color: #a5f3fc;
+}
+
+.quantum-code-block {
+  min-height: 290px;
+  margin: 0;
+  overflow-x: auto;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  color: #bae6fd;
+  font-size: clamp(0.75rem, 2.1vw, 0.9rem);
+  line-height: 1.8;
+  tab-size: 2;
+}
+
+.quantum-code-status {
+  min-height: 48px;
+  border-top: 1px solid rgb(148 163 184 / 0.14);
+  border-bottom: 0;
+  padding-inline: 1rem;
+}
+
+.quantum-code-status span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #a7f3d0;
+}
+
+@keyframes quantum-pulse {
+  0%, 100% { opacity: 0.65; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes quantum-float {
+  0%, 100% { transform: translateY(-4px) scale(0.98); }
+  50% { transform: translateY(6px) scale(1.02); }
+}
+
+@keyframes quantum-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes quantum-orbit-one {
+  to { transform: rotateX(68deg) rotateZ(368deg); }
+}
+
+@keyframes quantum-orbit-two {
+  to { transform: rotateY(68deg) rotateZ(402deg); }
+}
+
+@keyframes quantum-scroll {
+  0%, 100% { opacity: 0.35; transform: scaleY(0.55); transform-origin: top; }
+  50% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+}
+
+@media (min-width: 768px) {
+  .quantum-section-heading {
+    grid-template-columns: 1.35fr 0.65fr;
+  }
+
+  .quantum-scroll-cue {
+    display: flex;
+  }
+}
+
+@media (max-width: 1023px) {
+  .quantum-hero-image::after {
+    background: linear-gradient(90deg, rgb(2 6 15 / 0.98), rgb(2 6 15 / 0.78) 55%, rgb(2 6 15 / 0.48));
+  }
+
+  .quantum-state-panel {
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 640px) {
+  .quantum-nav-cta {
+    padding-inline: 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .quantum-hero-image {
+    inset: 0;
+    transform: none;
+  }
+
+  .quantum-hero-image::after {
+    background: linear-gradient(180deg, rgb(2 6 15 / 0.42), rgb(2 6 15 / 0.92) 52%, #02060d 92%);
+  }
+
+  .quantum-display {
+    font-size: clamp(2.75rem, 15vw, 4.3rem);
+  }
+
+  .quantum-state-panel {
+    min-height: 460px;
+    border-radius: 1.4rem;
+    padding: 1rem;
+    transform: none;
+  }
+
+  .quantum-orbit-stage {
+    height: 285px;
+    transform: none;
+  }
+
+  .quantum-orbit {
+    width: 210px;
+    height: 210px;
+  }
+
+  .quantum-orbit-three {
+    width: 160px;
+    height: 160px;
+  }
+
+  .quantum-state-core {
+    width: 98px;
+    height: 98px;
+    font-size: 3rem;
+  }
+
+  .quantum-pointer-hint {
+    display: none;
+  }
+
+  .quantum-image-card,
+  .quantum-image-card:hover {
+    transform: none;
+  }
+
+  .quantum-card-content {
+    min-height: 470px;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quantum-hero-image,
+  .quantum-state-panel,
+  .quantum-image-card,
+  .quantum-image-card:hover,
+  .quantum-card-content {
+    transform: none !important;
+  }
+
+  .quantum-kicker-dot,
+  .quantum-state-core,
+  .quantum-orbit,
+  .quantum-scroll-cue span {
+    animation: none !important;
+  }
+
+  .quantum-cursor-light {
+    display: none;
+  }
+}
