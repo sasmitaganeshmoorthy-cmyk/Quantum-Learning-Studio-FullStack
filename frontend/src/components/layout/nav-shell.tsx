@@ -23,6 +23,13 @@ import {
   Flame,
 } from 'lucide-react';
 import { useUiStore } from '@/stores/use-ui-store';
+import {
+  getGamificationProfile,
+} from '@/lib/api/gamification-client';
+
+import type {
+  LearnerGamification,
+} from '@/lib/api/gamification-client';
 
 interface NavShellProps {
   children: React.ReactNode;
@@ -43,6 +50,11 @@ export function NavShell({ children, userRole = 'student' }: NavShellProps) {
   const [role, setRole] = useState<'student' | 'instructor'>(userRole);
   const drawerRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const [gamification, setGamification] =
+  useState<LearnerGamification | null>(null);
+
+const [gamificationLoading, setGamificationLoading] =
+  useState(true);
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -65,6 +77,34 @@ export function NavShell({ children, userRole = 'student' }: NavShellProps) {
       menuButton?.focus();
     };
   }, [mobileMenuOpen]);
+    useEffect(() => {
+    let cancelled = false;
+
+    async function loadGamification() {
+      try {
+        const data = await getGamificationProfile();
+
+        if (!cancelled) {
+          setGamification(data);
+        }
+      } catch (error) {
+        console.error(
+          'Navigation gamification loading failed:',
+          error
+        );
+      } finally {
+        if (!cancelled) {
+          setGamificationLoading(false);
+        }
+      }
+    }
+
+    void loadGamification();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const studentLinks = [
     { href: '/app/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -140,14 +180,32 @@ export function NavShell({ children, userRole = 'student' }: NavShellProps) {
               <span className="text-body-small text-text-secondary font-medium flex items-center gap-1.5">
                 <Flame className="h-4 w-4 text-warning-color animate-bounce" /> Streak
               </span>
-              <span className="font-bold text-warning-color">5 Days</span>
+             <span className="font-bold text-warning-color">
+  {gamificationLoading
+    ? '—'
+    : `${gamification?.streak ?? 0} ${
+        gamification?.streak === 1 ? 'Day' : 'Days'
+      }`}
+</span>
             </div>
             <div className="w-full bg-border-color h-2 rounded-pill overflow-hidden">
-              <div className="bg-warning-color h-full w-[70%]" />
+            <div
+  className="bg-warning-color h-full"
+  style={{
+    width: `${Math.min(
+      ((gamification?.xp ?? 0) % 250) / 250 * 100,
+      100
+    )}%`,
+  }}
+/>
             </div>
             <div className="flex items-center justify-between text-body-small">
               <span className="text-text-secondary">XP Gained</span>
-              <span className="font-semibold text-primary-color">320 / 500 XP</span>
+              <span className="font-semibold text-primary-color">
+  {gamificationLoading
+    ? '—'
+    : `${gamification?.xp ?? 0} XP`}
+</span>
             </div>
           </div>
         )}

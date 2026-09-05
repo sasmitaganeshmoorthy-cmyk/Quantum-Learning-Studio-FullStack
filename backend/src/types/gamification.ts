@@ -1,0 +1,101 @@
+export type GamificationActivityType =
+  | 'lesson'
+  | 'challenge'
+  | 'assessment'
+  | 'simulation'
+  | 'daily_mission'
+  | 'boss';
+
+export interface GamificationAchievement {
+  id: string;
+  unlockedAt: string;
+}
+
+export interface GamificationQuest {
+  id: string;
+  status: 'locked' | 'available' | 'in_progress' | 'completed';
+  progress: number;
+  startedAt?: string;
+  completedAt?: string;
+}
+
+export interface GamificationBoss {
+  id: string;
+  status: 'locked' | 'available' | 'defeated';
+  defeatedAt?: string;
+}
+
+export interface GamificationWorld {
+  id: string;
+  name: string;
+  theme: string;
+  unlocked: boolean;
+  unlockedAt?: string;
+}
+
+export interface GamificationStatistics {
+  lessonsCompleted: number;
+  challengesCompleted: number;
+  assessmentsCompleted: number;
+  simulationsCompleted: number;
+  bossesDefeated: number;
+  totalActivitiesCompleted: number;
+}
+
+export interface LearnerGamification {
+  learnerId: string;
+
+  xp: number;
+  level: number;
+
+  streak: number;
+  longestStreak: number;
+  lastActivityDate?: string;
+
+  streakShields: number;
+  quantumCredits: number;
+
+  achievements: GamificationAchievement[];
+  quests: GamificationQuest[];
+  bosses: GamificationBoss[];
+  worlds: GamificationWorld[];
+
+  unlockedRegions: string[];
+
+  statistics: GamificationStatistics;
+
+  updatedAt: string;
+}
+
+export interface GamificationActivityEvent {
+  learnerId: string;
+  activityType: GamificationActivityType;
+  activityId: string;
+  eventId: string;
+
+  result?: {
+    scorePercent?: number;
+    passed?: boolean;
+    simulationCompleted?: boolean;
+  };
+}
+
+export interface GamificationEventResult {
+  xp: number;
+  level: number;
+
+  streak: number;
+  longestStreak: number;
+
+  quantumCredits: number;
+
+  xpEarned: number;
+  creditsEarned: number;
+
+  levelUp: boolean;
+
+  newAchievements: GamificationAchievement[];
+  newUnlocks: string[];
+
+  alreadyProcessed: boolean;
+}

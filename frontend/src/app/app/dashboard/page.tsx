@@ -13,7 +13,10 @@ import {
   FolderOpen
 } from 'lucide-react';
 import { mockUser, mockCourses, mockConcepts } from '@/lib/api/mock-client';
+import { getGamificationProfile } from '@/lib/api/gamification-client';
+import type { LearnerGamification } from '@/lib/api/gamification-client';
 import { InteractivePageHero } from '@/components/visual/interactive-page-hero';
+import { QuantumUniversePanel } from '@/components/gamification/quantum-universe-panel';
 interface OnboardingProfile {
   role: 'student' | 'instructor';
   goal: string;
@@ -34,6 +37,11 @@ export default function LearnerDashboard() {
   const [profile, setProfile] = useState<OnboardingProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
   const [progress, setProgress] = useState<LearnerProgress | null>(null);
+  const [gamification, setGamification] =
+  useState<LearnerGamification | null>(null);
+
+const [gamificationLoading, setGamificationLoading] =
+  useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -104,6 +112,34 @@ export default function LearnerDashboard() {
       cancelled = true;
     };
   }, []);
+  useEffect(() => {
+  let cancelled = false;
+
+  async function loadGamification() {
+    try {
+      const data = await getGamificationProfile();
+
+      if (!cancelled) {
+        setGamification(data);
+      }
+    } catch (error) {
+      console.error(
+        'Dashboard gamification loading failed:',
+        error
+      );
+    } finally {
+      if (!cancelled) {
+        setGamificationLoading(false);
+      }
+    }
+  }
+
+  void loadGamification();
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
 
   const displayName =
     user?.firstName ||
@@ -154,7 +190,8 @@ export default function LearnerDashboard() {
       )
       : 0;
 
-  const earnedXp = completedLessons.size * 50;
+  const earnedXp = gamification?.xp ?? 0;
+const currentStreak = gamification?.streak ?? 0;
 
   const getCourseProgress = (courseId: string) => {
     if (courseId === 'course-101') {
@@ -203,19 +240,45 @@ export default function LearnerDashboard() {
           </>
         }
         metrics={
-          <>
-            <div className="app-hero-metric"><strong>{mockUser.streak} days</strong><span>Learning streak</span></div>
-            <div className="app-hero-metric">
-              <strong>{earnedXp} XP</strong>
-              <span>Experience</span>
-            </div>
+  <>
+    <div className="app-hero-metric">
+      <strong>
+  {gamificationLoading
+    ? '—'
+    : `${currentStreak} ${currentStreak === 1 ? 'day' : 'days'}`}
+</strong>
+      <span>Learning streak</span>
+    </div>
 
-            <div className="app-hero-metric">
-              <strong>{currentMastery}%</strong>
-              <span>Current mastery</span>
-            </div>
-          </>
-        }
+    <div className="app-hero-metric">
+      <strong>
+        {gamificationLoading
+          ? '—'
+          : `${earnedXp} XP`}
+      </strong>
+      <span>Experience</span>
+    </div>
+
+    <div className="app-hero-metric">
+      <strong>
+        {gamificationLoading
+          ? '—'
+          : `${gamification?.quantumCredits ?? 0}`}
+      </strong>
+      <span>Quantum Credits</span>
+    </div>
+
+    <div className="app-hero-metric">
+      <strong>{currentMastery}%</strong>
+      <span>Current mastery</span>
+    </div>
+  </>
+}
+            />
+
+      <QuantumUniversePanel
+        gamification={gamification}
+        loading={gamificationLoading}
       />
 
       {/* Main Grid Layout */}
@@ -348,33 +411,6 @@ export default function LearnerDashboard() {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Achievements Summary Panel */}
-          <div className="p-6 rounded-large bg-surface border border-border-color shadow-xs space-y-6">
-            <h3 className="font-bold text-body-large tracking-tight">Recent Achievements</h3>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 shrink-0 bg-yellow-500/10 text-yellow-500 rounded-pill flex items-center justify-center">
-                  <Flame size={20} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-body-small">Coherence Streak</h4>
-                  <p className="text-caption text-text-secondary">Complete a lesson 5 days in a row.</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 shrink-0 bg-indigo-500/10 text-indigo-500 rounded-pill flex items-center justify-center">
-                  <Atom size={20} />
-                </div>
-                <div>
-                  <h4 className="font-bold text-body-small">Entangler Alpha</h4>
-                  <p className="text-caption text-text-secondary">Verify your first multi-qubit Bell State.</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>

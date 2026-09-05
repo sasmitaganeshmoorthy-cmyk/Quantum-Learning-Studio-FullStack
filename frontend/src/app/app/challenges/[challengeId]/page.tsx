@@ -16,6 +16,7 @@ import {
 import confetti from 'canvas-confetti';
 import { mockChallenges, mockApi } from '@/lib/api/mock-client';
 import { Circuit, ChallengeEvaluation } from '@/lib/api/types';
+import { awardGamificationActivity } from '@/lib/api/gamification-client';
 import { CircuitBuilder } from '@/components/quantum/circuit-builder';
 import { AiTutor } from '@/components/learning/ai-tutor';
 
@@ -37,8 +38,12 @@ export default function ChallengeWorkspace({ params }: { params: Promise<{ chall
   
   // Submit states
   const [submitting, setSubmitting] = useState(false);
-  const [evaluation, setEvaluation] = useState<ChallengeEvaluation | null>(null);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+const [evaluation, setEvaluation] = useState<ChallengeEvaluation | null>(null);
+const [showSuccessModal, setShowSuccessModal] = useState(false);
+const [gamificationReward, setGamificationReward] = useState<{
+  xpEarned: number;
+  creditsEarned: number;
+} | null>(null);
   const [activeMobileTab, setActiveMobileTab] = useState<'canvas' | 'instructions' | 'tutor'>('canvas');
 
   if (!challenge || !circuit) {
@@ -60,30 +65,64 @@ export default function ChallengeWorkspace({ params }: { params: Promise<{ chall
   };
 
   const handleSubmitSolution = async () => {
-    setSubmitting(true);
-    setEvaluation(null);
+  setSubmitting(true);
+  setEvaluation(null);
+  setGamificationReward(null);
 
-    try {
-      const res = await mockApi.evaluateChallenge(challenge.id, circuit);
-      setEvaluation(res);
+  try {
+    const res = await mockApi.evaluateChallenge(
+      challenge.id,
+      circuit
+    );
 
-      if (res.isCorrect) {
-        // Trigger confetti fireworks
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 }
+    setEvaluation(res);
+
+    if (res.isCorrect) {
+      // Award the real gamification reward from the backend.
+      try {
+        const reward = await awardGamificationActivity({
+          activityType: 'challenge',
+          activityId: challenge.id,
+          eventId: `challenge-completion-${challenge.id}`,
+          result: {
+            passed: true,
+          },
+        });
+
+        if (!reward.alreadyProcessed) {
+          setGamificationReward({
+            xpEarned: reward.xpEarned,
+            creditsEarned: reward.creditsEarned,
           });
         }
-        setShowSuccessModal(true);
+      } catch (error) {
+        console.error(
+          'Challenge gamification award failed:',
+          error
+        );
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setSubmitting(false);
+
+      // Trigger confetti fireworks
+      if (
+        !window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches
+      ) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      }
+
+      setShowSuccessModal(true);
     }
-  };
+  } catch (e) {
+    console.error(e);
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div className="h-full min-h-0 min-w-0 flex flex-col overflow-hidden font-sans relative">
@@ -314,10 +353,30 @@ export default function ChallengeWorkspace({ params }: { params: Promise<{ chall
               </p>
             </div>
 
-            <div className="p-4 bg-background border border-border-color/50 rounded-medium flex items-center justify-center gap-2">
-              <Star className="text-warning-color h-5 w-5" fill="currentColor" />
-              <span className="font-bold text-body-large text-warning-color">+{challenge.xpReward} XP Gained</span>
-            </div>
+            <div className="p-4 bg-background border border-border-color/50 rounded-medium space-y-3">
+  {gamificationReward ? (
+    <>
+      <div className="flex items-center justify-center gap-2">
+        <Star
+          className="text-warning-color h-5 w-5"
+          fill="currentColor"
+        />
+        <span className="font-bold text-body-large text-warning-color">
+          +{gamificationReward.xpEarned} XP Gained
+        </span>
+      </div>
+
+      <div className="text-caption text-text-secondary">
+        +{gamificationReward.creditsEarned} Quantum Credits
+      </div>
+    </>
+  ) : (
+    <span className="font-semibold text-body-small text-text-secondary">
+      Challenge completed. Gamification reward could not be
+      confirmed yet.
+    </span>
+  )}
+</div>
 
             <div className="flex flex-col-reverse gap-3 sm:flex-row sm:gap-4">
               <button

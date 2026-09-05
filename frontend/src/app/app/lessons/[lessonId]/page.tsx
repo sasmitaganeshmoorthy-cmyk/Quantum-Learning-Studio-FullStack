@@ -11,6 +11,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 import { mockLessons } from '@/lib/api/mock-client';
+import { awardGamificationActivity } from '@/lib/api/gamification-client';
 import { BlochSphere } from '@/components/quantum/bloch-sphere';
 import { InteractivePageHero } from '@/components/visual/interactive-page-hero';
 
@@ -31,6 +32,7 @@ export default function LessonPage({ params }: { params: Promise<{ lessonId: str
   const [progressSaving, setProgressSaving] = useState(false);
   const [progressSaved, setProgressSaved] = useState(false);
   const [progressError, setProgressError] = useState('');
+  const [gamificationError, setGamificationError] = useState('');
   // Mobile syllabus drawer state
   const [outlineOpen, setOutlineOpen] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -140,29 +142,46 @@ export default function LessonPage({ params }: { params: Promise<{ lessonId: str
           : 'Practice the completed lesson in the Quantum Lab.';
 
       const saveResponse = await fetch('/api/v1/progress', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          completedModules,
-          mastery: {
-            ...(currentProgress?.mastery ?? {}),
-            [lessonId]: masteryScore,
-          },
-          suggestedNext,
-        }),
-      });
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    completedModules,
+    mastery: {
+      ...(currentProgress?.mastery ?? {}),
+      [lessonId]: masteryScore,
+    },
+    suggestedNext,
+  }),
+});
 
-      const savedData = await saveResponse.json();
+const savedData = await saveResponse.json();
 
-      if (!saveResponse.ok) {
-        throw new Error(
-          savedData.error ?? 'Unable to save lesson progress.'
-        );
-      }
+if (!saveResponse.ok) {
+  throw new Error(
+    savedData.error ?? 'Unable to save lesson progress.'
+  );
+}
 
-      setProgressSaved(true);
+try {
+  await awardGamificationActivity({
+    activityType: 'lesson',
+    activityId: lessonId,
+    eventId: `lesson-completion-${lessonId}`,
+    result: {
+      scorePercent: masteryScore,
+      passed: masteryScore >= 50,
+    },
+  });
+} catch (error) {
+  console.error(
+    'Lesson gamification award failed:',
+    error
+  );
+}
+
+setProgressSaved(true);
     } catch (error) {
       console.error('Lesson progress save failed:', error);
 
