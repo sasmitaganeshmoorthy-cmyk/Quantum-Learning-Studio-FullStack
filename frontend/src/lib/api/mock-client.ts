@@ -64,7 +64,7 @@ export const mockCourses: Course[] = [
     id: 'course-102',
     title: 'Quantum Entanglement & Multi-Qubit Systems',
     description: 'Explore the strange phenomenon of quantum entanglement. Learn to construct Bell states, use CNOT, and analyze correlation.',
-    difficulty: 'beginner',
+    difficulty: 'intermediate',
     estimatedDuration: '3 hours',
     modulesCount: 2,
     lessonsCount: 8,
@@ -81,7 +81,7 @@ export const mockCourses: Course[] = [
     id: 'course-201',
     title: 'Quantum Algorithms I: Deutsch-Jozsa & Grover',
     description: 'Unlock the real computational power of quantum computers. Implement Deutsch-Jozsa, phase kickback, and Grover search.',
-    difficulty: 'intermediate',
+    difficulty: 'advanced',
     estimatedDuration: '5 hours',
     modulesCount: 3,
     lessonsCount: 12,
@@ -756,3 +756,4 @@ What specific concept or gate formula can I clarify for you today?`;
     return text;
   }
 };
+

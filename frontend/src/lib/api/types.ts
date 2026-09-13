@@ -320,3 +320,11 @@ export interface PaginatedResponse<T> {
   limit: number;
   hasNext: boolean;
 }
+export interface Video {
+  id: string;
+  title: string;
+  level: 'intermediate' | 'advanced';
+  description: string;
+  videoUrl: string;
+  order: number;
+}

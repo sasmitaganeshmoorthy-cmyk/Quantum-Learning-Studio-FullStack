@@ -13,6 +13,7 @@ import {
   FolderOpen
 } from 'lucide-react';
 import { mockUser, mockCourses, mockConcepts } from '@/lib/api/mock-client';
+import type { Video } from '@/lib/api/types';
 import { getGamificationProfile } from '@/lib/api/gamification-client';
 import type { LearnerGamification } from '@/lib/api/gamification-client';
 import { InteractivePageHero } from '@/components/visual/interactive-page-hero';
@@ -37,12 +38,45 @@ export default function LearnerDashboard() {
   const [profile, setProfile] = useState<OnboardingProfile | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
   const [progress, setProgress] = useState<LearnerProgress | null>(null);
+  const [videos, setVideos] = useState<Video[]>([]);
   const [gamification, setGamification] =
   useState<LearnerGamification | null>(null);
 
 const [gamificationLoading, setGamificationLoading] =
   useState(true);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadVideos() {
+      try {
+        const response = await fetch('/api/v1/videos', {
+          method: 'GET',
+          cache: 'no-store',
+        });
+
+        if (!response.ok) {
+          throw new Error(`Videos API returned ${response.status}`);
+        }
+
+        const data = (await response.json()) as {
+          videos: Video[];
+        };
+
+        if (!cancelled) {
+          setVideos(data.videos);
+        }
+      } catch (error) {
+        console.error('Dashboard video loading failed:', error);
+      }
+    }
+
+    void loadVideos();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   useEffect(() => {
     let cancelled = false;
 
@@ -347,6 +381,71 @@ const currentStreak = gamification?.streak ?? 0;
             </div>
           </div>
 
+          {/* Learning Videos */}
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-xl font-bold tracking-tight">
+                Learning Videos
+              </h3>
+              <p className="text-body-small text-text-secondary">
+                Continue learning with your quantum video lessons.
+              </p>
+            </div>
+
+            {videos.length === 0 ? (
+              <div className="app-depth-card rounded-large p-6">
+                <p className="text-body-small text-text-secondary">
+                  No learning videos are available yet.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {(['intermediate', 'advanced'] as const).map((level) => {
+                  const levelVideos = videos
+                    .filter((video) => video.level === level)
+                    .sort((a, b) => a.order - b.order);
+
+                  if (levelVideos.length === 0) {
+                    return null;
+                  }
+
+                  return (
+                    <div key={level} className="space-y-4">
+                      <h4 className="text-lg font-bold capitalize">
+                        {level}
+                      </h4>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {levelVideos.map((video) => (
+                          <div
+                            key={video.id}
+                            className="app-depth-card rounded-large overflow-hidden"
+                          >
+                            <video
+                              controls
+                              preload="metadata"
+                              className="w-full aspect-video bg-black"
+                              src={video.videoUrl}
+                            />
+
+                            <div className="p-5 space-y-2">
+                              <h5 className="font-bold text-body-large">
+                                {video.title}
+                              </h5>
+
+                              <p className="text-body-small text-text-secondary">
+                                {video.description}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
           {/* Recent Workspace Projects */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -418,3 +517,4 @@ const currentStreak = gamification?.streak ?? 0;
     </div>
   );
 }
+

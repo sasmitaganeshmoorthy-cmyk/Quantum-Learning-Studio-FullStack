@@ -8,6 +8,7 @@ import { gamificationRouter } from './routes/gamification';
 import { healthRouter } from './routes/health';
 import { onboardingRouter } from './routes/onboarding';
 import { progressRouter } from './routes/progress';
+import { videosRouter } from './routes/videos';
 
 function allowedOrigins(): string[] {
   return (process.env.FRONTEND_URLS ?? 'http://localhost:3000')
@@ -31,6 +32,7 @@ export function createApp() {
   app.use('/api/v1/progress', progressRouter);
   app.use('/api/v1/companion', companionRouter);
   app.use('/api/v1/gamification', gamificationRouter);
+  app.use('/api/v1/videos', videosRouter);
 
   app.use((_request, response) => {
     response.status(404).json({ error: 'Route not found' });
