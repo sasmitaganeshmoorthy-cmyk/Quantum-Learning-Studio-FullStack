@@ -15,7 +15,15 @@ export default function MasteryProgress() {
   const [selectedConceptId, setSelectedConceptId] = useState<string>('entanglement');
 
   const selectedConcept = mockConcepts.find((c) => c.conceptId === selectedConceptId);
+  const shareOnLinkedIn = () => {
+    const url = encodeURIComponent(window.location.href);
 
+    window.open(
+      `https://www.linkedin.com/sharing/share-offsite/?url=${url}`,
+      '_blank',
+      'width=600,height=600'
+    );
+  };
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header Title */}
@@ -163,7 +171,29 @@ export default function MasteryProgress() {
           )}
         </div>
 
+            </div>
+
+      {/* LinkedIn Share Section */}
+      <div className="mt-10 mb-8 rounded-large bg-surface p-8 text-center shadow-xs border border-border-color">
+        <h2 className="text-2xl font-bold text-text-primary">
+          Share Your Progress
+        </h2>
+
+        <p className="mt-2 text-body-small text-text-secondary">
+          Proud of your quantum learning journey? Share your progress on LinkedIn.
+        </p>
+
+        <button
+          type="button"
+          onClick={shareOnLinkedIn}
+          className="mt-6 inline-flex items-center gap-2 rounded-medium bg-primary-color px-6 py-3 font-bold text-white hover:bg-primary-hover"
+        >
+          <span className="font-bold">in</span>
+          Share on LinkedIn
+          <span>↗</span>
+        </button>
       </div>
+
     </div>
   );
 }
