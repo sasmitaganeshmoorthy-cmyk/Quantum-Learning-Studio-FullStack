@@ -328,3 +328,12 @@ export interface Video {
   videoUrl: string;
   order: number;
 }
+
+export type QuizDifficulty = 1 | 2 | 3 | 4 | 5;
+
+export type LearnerLevel =
+  | 'foundation'
+  | 'basic'
+  | 'intermediate'
+  | 'advanced'
+  | 'expert';

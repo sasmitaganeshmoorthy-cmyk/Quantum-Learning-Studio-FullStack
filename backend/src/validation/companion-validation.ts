@@ -67,21 +67,51 @@ export function parseCompanionChatRequest(value: unknown): CompanionChatRequest 
 
 export function parseLearnerProgress(value: unknown): LearnerProgressDto | null {
   if (!isRecord(value)) return null;
+
   const learnerId = readText(value.learnerId, 160);
   const suggestedNext = readText(value.suggestedNext, 500);
-  if (!learnerId || !suggestedNext || !isRecord(value.mastery)) return null;
+
+  if (!learnerId || !suggestedNext || !isRecord(value.mastery)) {
+    return null;
+  }
+
+  const completedLessons = Array.isArray(value.completedLessons)
+    ? value.completedLessons
+        .map((item) => readText(item, 120))
+        .filter((item): item is string => Boolean(item))
+        .slice(0, 200)
+    : [];
 
   const completedModules = Array.isArray(value.completedModules)
-    ? value.completedModules.map((item) => readText(item, 120)).filter((item): item is string => Boolean(item)).slice(0, 100)
+    ? value.completedModules
+        .map((item) => readText(item, 120))
+        .filter((item): item is string => Boolean(item))
+        .slice(0, 100)
     : [];
+
   const mastery = Object.fromEntries(
     Object.entries(value.mastery)
-      .filter(([key, score]) => key.length <= 120 && typeof score === 'number' && Number.isFinite(score))
+      .filter(
+        ([key, score]) =>
+          key.length <= 120 &&
+          typeof score === 'number' &&
+          Number.isFinite(score),
+      )
       .slice(0, 100)
-      .map(([key, score]) => [key, Math.round(Math.min(Math.max(score as number, 0), 100))]),
+      .map(([key, score]) => [
+        key,
+        Math.round(Math.min(Math.max(score as number, 0), 100)),
+      ]),
   );
 
-  return { learnerId, completedModules, mastery, suggestedNext, updatedAt: new Date().toISOString() };
+  return {
+    learnerId,
+    completedLessons,
+    completedModules,
+    mastery,
+    suggestedNext,
+    updatedAt: new Date().toISOString(),
+  };
 }
 
 export function isSafeIdentifier(value: string | null): value is string {

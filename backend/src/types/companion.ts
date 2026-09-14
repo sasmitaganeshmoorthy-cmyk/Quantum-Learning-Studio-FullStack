@@ -31,6 +31,7 @@ export interface CompanionHistoryResponse {
 
 export interface LearnerProgressDto {
   learnerId: string;
+  completedLessons: string[];
   completedModules: string[];
   mastery: Record<string, number>;
   suggestedNext: string;

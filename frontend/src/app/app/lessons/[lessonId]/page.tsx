@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { use, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -25,12 +25,14 @@ export default function LessonPage({ params }: { params: Promise<{ lessonId: str
   const { lessonId } = use(params);
 
   const lesson = mockLessons[lessonId];
+  const currentModuleId = lesson?.moduleId;
 
   // Quiz state
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
   const [submittedQuestions, setSubmittedQuestions] = useState<Record<string, boolean>>({});
   const [progressSaving, setProgressSaving] = useState(false);
   const [progressSaved, setProgressSaved] = useState(false);
+  const [isModuleComplete, setIsModuleComplete] = useState(false);
   const [progressError, setProgressError] = useState('');
   const [gamificationError, setGamificationError] = useState('');
   // Mobile syllabus drawer state
@@ -77,6 +79,22 @@ export default function LessonPage({ params }: { params: Promise<{ lessonId: str
     { id: 'lesson-102-1', title: 'Building Bell States', isCompleted: false }
   ];
 
+  const moduleLessons: Record<string, string[]> = {
+    'mod-101-1': [
+      'lesson-101-1',
+      'lesson-101-2',
+      'lesson-101-3',
+    ],
+    'mod-101-2': [
+      'lesson-101-4',
+      'lesson-101-5',
+    ],
+    'mod-102-1': [
+      'lesson-102-1',
+      'lesson-102-2',
+      'lesson-102-3',
+    ],
+  };
   const handleAnswerSelect = (qId: string, idx: number) => {
     if (submittedQuestions[qId]) return; // locked after submit
     setSelectedAnswers((prev) => ({ ...prev, [qId]: idx }));
@@ -123,18 +141,40 @@ export default function LessonPage({ params }: { params: Promise<{ lessonId: str
 
       const currentProgress = currentData.progress as
         | {
+          completedLessons?: string[];
           completedModules?: string[];
           mastery?: Record<string, number>;
           suggestedNext?: string;
         }
         | null;
 
-      const completedModules = Array.from(
+      const completedLessons = Array.from(
         new Set([
-          ...(currentProgress?.completedModules ?? []),
+          ...(currentProgress?.completedLessons ?? []),
           lessonId,
         ])
       );
+
+
+
+      const lessonsInCurrentModule = currentModuleId
+        ? moduleLessons[currentModuleId] ?? []
+        : [];
+
+      const moduleComplete =
+        lessonsInCurrentModule.length > 0 &&
+        lessonsInCurrentModule.every((id) => completedLessons.includes(id));
+
+      setIsModuleComplete(moduleComplete);
+
+      const completedModules = moduleComplete
+        ? Array.from(
+            new Set([
+              ...(currentProgress?.completedModules ?? []),
+              currentModuleId,
+            ])
+          )
+        : currentProgress?.completedModules ?? [];
 
       const suggestedNext =
         lessonId === 'lesson-101-1'
@@ -147,6 +187,7 @@ export default function LessonPage({ params }: { params: Promise<{ lessonId: str
     'Content-Type': 'application/json',
   },
   body: JSON.stringify({
+    completedLessons,
     completedModules,
     mastery: {
       ...(currentProgress?.mastery ?? {}),
@@ -438,7 +479,7 @@ setProgressSaved(true);
                         : 'bg-red-50 dark:bg-red-950/20 border-error-color/30 text-error-color'
                         }`}>
                         <div className="font-bold">
-                          {isCorrect ? '✓ Correct Answer!' : '✗ Incorrect. Try again.'}
+                          {isCorrect ? 'Correct Answer!' : 'Incorrect. Try again.'}
                         </div>
                         <p className="text-text-secondary leading-relaxed">
                           {q.explanation}
@@ -477,9 +518,30 @@ setProgressSaved(true);
                 {progressSaving
                   ? 'Saving progress...'
                   : progressSaved
-                    ? 'Progress saved ✓'
+                    ? 'Progress saved'
                     : `Complete lesson and earn ${lesson.xpReward} XP`}
               </button>
+
+              {progressSaved && (
+                <div className="mt-4 rounded-large border border-primary-color/30 bg-primary-color/5 p-5 space-y-3">
+                  <div>
+                    <h3 className="font-bold text-text-primary">
+                      AI learning assessment ready
+                    </h3>
+                    <p className="text-body-small text-text-secondary">
+                      Test what you learned in this lesson with 5 fresh AI-generated questions adapted to your current knowledge level.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/app/ai-quiz?lessonId=${encodeURIComponent(lessonId)}`)}
+                    className="rounded-medium bg-primary-color px-5 py-2 text-body-small font-bold text-white hover:bg-primary-hover transition-colors"
+                  >
+                    Take 5-Question AI Assessment
+                  </button>
+                </div>
+              )}
             </div>
           )}
           {/* Previous / Next Navigation actions */}
@@ -532,3 +594,15 @@ setProgressSaved(true);
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+

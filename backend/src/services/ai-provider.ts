@@ -36,7 +36,7 @@ export async function requestExternalAi(payload: ProviderPayload): Promise<Provi
   const baseUrl = (process.env.AI_API_BASE_URL ?? 'https://api.openai.com/v1').replace(/\/$/, '');
   const model = process.env.AI_MODEL ?? 'gpt-4.1-mini';
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 18_000);
+  const timeout = setTimeout(() => controller.abort(), 60_000);
 
   try {
     const response = await fetch(`${baseUrl}/chat/completions`, {
@@ -48,7 +48,7 @@ export async function requestExternalAi(payload: ProviderPayload): Promise<Provi
       body: JSON.stringify({
         model,
         temperature: 0.35,
-        max_tokens: 700,
+        max_tokens: 3500,
         messages: [
           { role: 'system', content: buildSystemPrompt(payload.level, payload.context) },
           ...payload.history.slice(-8).map(({ role, content }) => ({ role, content })),
@@ -96,3 +96,6 @@ export async function requestExternalAi(payload: ProviderPayload): Promise<Provi
     clearTimeout(timeout);
   }
 }
+
+
+
