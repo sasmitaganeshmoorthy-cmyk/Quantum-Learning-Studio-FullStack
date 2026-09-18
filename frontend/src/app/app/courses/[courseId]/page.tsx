@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -17,6 +17,7 @@ import { InteractivePageHero } from '@/components/visual/interactive-page-hero';
 export default function CourseDetail({ params }: { params: Promise<{ courseId: string }> }) {
   const router = useRouter();
   const { courseId } = use(params);
+  const [showFoundationVideo, setShowFoundationVideo] = useState(false);
 
   const course = mockCourses.find((c) => c.id === courseId);
 
@@ -114,10 +115,48 @@ export default function CourseDetail({ params }: { params: Promise<{ courseId: s
             {courseModules.map((module) => (
               <div key={module.id} className="app-depth-card app-interactive-card rounded-large p-5 space-y-4">
                 <div>
-                  <h4 className="font-bold text-body-large text-text-primary">{module.title}</h4>
-                  <p className="text-caption text-text-secondary">{module.description}</p>
-                </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (module.id === 'mod-101-1') {
+                        setShowFoundationVideo(!showFoundationVideo);
+                      }
+                    }}
+                    className="w-full text-left"
+                  >
+                    <h4 className="font-bold text-body-large text-text-primary hover:text-primary-color transition-colors">
+                      {module.title}
+                    </h4>
 
+                    <p className="text-caption text-text-secondary">
+                      {module.description}
+                    </p>
+
+                    {module.id === 'mod-101-1' && (
+                      <p className="text-caption text-primary-color mt-2 font-semibold">
+                        Click to {showFoundationVideo ? 'hide' : 'watch'} introduction video
+                      </p>
+                    )}
+                  </button>
+                </div>
+                {module.id === 'mod-101-1' && showFoundationVideo && (
+                  <div className="mt-6">
+                    <h3 className="text-xl font-bold tracking-tight mb-3">
+                      Introduction to Quantum Computing
+                    </h3>
+
+                    <div className="w-full rounded-large overflow-hidden bg-black">
+                      <video
+                        className="w-full h-auto max-h-[600px] mx-auto"
+                        controls
+                        preload="metadata"
+                      >
+                        <source src="/videos/video1.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-2">
                   {module.lessons.map((lesson) => (
                     <div
