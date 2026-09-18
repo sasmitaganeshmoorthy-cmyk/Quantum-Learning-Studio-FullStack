@@ -1,4 +1,4 @@
-import { aiQuizRouter } from './routes/ai-quiz';
+﻿import { aiQuizRouter } from './routes/ai-quiz';
 import { clerkMiddleware } from '@clerk/express';
 import cors from 'cors';
 import express from 'express';
@@ -9,6 +9,7 @@ import { gamificationRouter } from './routes/gamification';
 import { healthRouter } from './routes/health';
 import { onboardingRouter } from './routes/onboarding';
 import { progressRouter } from './routes/progress';
+import { quantumRouter } from './routes/quantum';
 import { videosRouter } from './routes/videos';
 
 
@@ -35,7 +36,8 @@ export function createApp() {
   app.use('/api/v1/companion', companionRouter);
   app.use('/api/v1/gamification', gamificationRouter);
   app.use('/api/v1/videos', videosRouter);
-app.use('/api/v1/ai-quizzes', aiQuizRouter);
+  app.use('/api/v1/ai-quizzes', aiQuizRouter);
+  app.use('/api/v1/quantum', quantumRouter);
 
   app.use((_request, response) => {
     response.status(404).json({ error: 'Route not found' });
