@@ -187,6 +187,20 @@ where $0 \\le \\theta \\le \\pi$ and $0 \\le \\phi < 2\\pi$.
       }
     ]
   },
+  'lesson-101-5': {
+    id: 'lesson-101-5',
+    moduleId: 'mod-101-2',
+    title: 'Superposition & The Hadamard Gate',
+    description: 'Learn how superposition works and how the Hadamard gate creates a superposition state.',
+    order: 5,
+    isCompleted: false,
+    xpReward: 40,
+    contentMarkdown: `
+# Superposition & The Hadamard Gate
+
+Learn how a qubit can exist in a superposition of states and how the Hadamard gate creates this important quantum state.
+`,
+  },
   'lesson-102-1': {
     id: 'lesson-102-1',
     moduleId: 'mod-102-1',

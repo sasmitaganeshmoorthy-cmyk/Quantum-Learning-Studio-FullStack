@@ -1,0 +1,2 @@
+# Optional cloud integration. qBraid's IonQ runtime requires an IonQ API key.
+qbraid[ionq]>=0.10,<1

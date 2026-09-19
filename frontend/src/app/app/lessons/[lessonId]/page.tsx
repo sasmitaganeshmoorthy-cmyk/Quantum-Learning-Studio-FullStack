@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { use, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -393,9 +393,31 @@ setProgressSaved(true);
                 phi={lesson.blochSphereInitialState.phi}
                 showControls
               />
+              <div className="md:col-span-2 mt-4 overflow-hidden rounded-large border border-border-color bg-surface">
+                <video
+                  className="w-full aspect-video object-cover"
+                  controls
+                  preload="metadata"
+                >
+                  <source src="/videos/video2.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
             </div>
           )}
 
+          {lessonId === 'lesson-101-5' && (
+            <div className="mt-6 overflow-hidden rounded-large border border-border-color bg-surface">
+              <video
+                className="w-full aspect-video object-cover"
+                controls
+                preload="metadata"
+              >
+                <source src="/videos/video3.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          )}
           {/* Embedded circuit templates link */}
           {lesson.circuitTemplate && (
             <div className="p-5 rounded-large bg-primary-color/5 border border-primary-color/20 flex flex-col sm:flex-row items-center justify-between gap-4">

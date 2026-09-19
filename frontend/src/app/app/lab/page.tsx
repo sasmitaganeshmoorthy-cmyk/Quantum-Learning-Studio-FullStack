@@ -15,6 +15,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { mockApi } from '@/lib/api/mock-client';
+import { simulateQuantumCircuit, type QuantumBackend } from '@/lib/api/quantum-client';
 import { Circuit, CircuitValidationResult, SimulationResult } from '@/lib/api/types';
 import { CircuitBuilder } from '@/components/quantum/circuit-builder';
 import { BlochSphere } from '@/components/quantum/bloch-sphere';
@@ -22,7 +23,7 @@ import { AiTutor } from '@/components/learning/ai-tutor';
 
 export default function QuantumLab() {
   type Framework = 'qiskit' | 'cirq' | 'pennylane' | 'openqasm';
-  type Backend = 'ideal_simulator' | 'noisy_simulator' | 'quantum_hardware_ibmq';
+  type Backend = 'ideal_simulator' | 'noisy_simulator' | 'quantum_hardware_ibmq' | 'real_quantum_backend';
 
   // Current active visual circuit state
   const [circuit, setCircuit] = useState<Circuit>({
@@ -46,6 +47,19 @@ export default function QuantumLab() {
   // Simulator configurations
   const [shots, setShots] = useState(1024);
   const [backend, setBackend] = useState<Backend>('ideal_simulator');
+  const [quantumBackend, setQuantumBackend] = useState<QuantumBackend>('qiskit-aer');
+
+  const [realSimulationResult, setRealSimulationResult] = useState<{
+    backend: string;
+    provider: string;
+    counts: Record<string, number>;
+    probabilities: Record<string, number>;
+    shots: number;
+    execution_time_ms: number;
+    local: boolean;
+  } | null>(null);
+
+  const [realSimulationError, setRealSimulationError] = useState<string | null>(null);
   
   // Validation state (re-run whenever operations change)
   const [validation, setValidation] = useState<CircuitValidationResult>({ isValid: true, errors: [] });
@@ -68,6 +82,31 @@ export default function QuantumLab() {
   }, [circuit]);
 
   // Execute simulation job
+  const handleRealQuantumSimulation = async () => {
+    setLoadingSimulation(true);
+    setRealSimulationError(null);
+    setRealSimulationResult(null);
+
+    try {
+      const result = await simulateQuantumCircuit({
+        circuit,
+        backend: quantumBackend,
+        shots,
+      });
+
+      setRealSimulationResult(result);
+      setWhyStepIndex(0);
+    } catch (error) {
+      const message = error instanceof Error
+        ? error.message
+        : 'Unable to run the real quantum simulation.';
+
+      setRealSimulationError(message);
+      console.error('Real quantum simulation failed:', error);
+    } finally {
+      setLoadingSimulation(false);
+    }
+  };
   const handleRunSimulation = async () => {
     setLoadingSimulation(true);
     setSimulationResult(null);
@@ -153,7 +192,25 @@ export default function QuantumLab() {
               <option value="ideal_simulator">Ideal Statevector Simulator</option>
               <option value="noisy_simulator">Qiskit Fake Aer Noisy Simulator</option>
               <option value="quantum_hardware_ibmq">IBMQ Brisbane Hardware Cloud</option>
+              <option value="real_quantum_backend">Real Quantum Backend</option>
             </select>
+
+            {backend === 'real_quantum_backend' && (
+              <>
+                <label className="sr-only" htmlFor="quantum-backend">Real quantum backend</label>
+                <select
+                  id="quantum-backend"
+                  value={quantumBackend}
+                  onChange={(event) => setQuantumBackend(event.target.value as QuantumBackend)}
+                  className="min-w-0 w-full bg-surface border border-border-color rounded-medium px-3 py-1 text-ellipsis"
+                >
+                  <option value="qiskit-aer">Qiskit Aer</option>
+                  <option value="pennylane">PennyLane</option>
+                  <option value="cirq">Cirq</option>
+                  <option value="qbraid-ionq">qBraid / IonQ</option>
+                </select>
+              </>
+            )}
 
             <label className="sr-only" htmlFor="simulation-shots">Number of simulation shots</label>
             <select
@@ -170,7 +227,7 @@ export default function QuantumLab() {
 
           {/* Run button action */}
           <button
-            onClick={handleRunSimulation}
+            onClick={backend === 'real_quantum_backend' ? handleRealQuantumSimulation : handleRunSimulation}
             disabled={loadingSimulation || circuit.operations.length === 0}
             className="w-full sm:w-auto px-4 py-1.5 bg-primary-color hover:bg-primary-hover text-white text-caption font-bold rounded-medium transition-colors flex items-center justify-center gap-1.5 disabled:opacity-30"
             aria-describedby="simulation-status"
