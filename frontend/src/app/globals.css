@@ -628,13 +628,6 @@ th {
   backdrop-filter: blur(18px) saturate(140%);
 }
 
-.quantum-logo {
-  border: 1px solid rgb(103 232 249 / 0.4);
-  background:
-    radial-gradient(circle at 32% 20%, rgb(255 255 255 / 0.48), transparent 22%),
-    linear-gradient(145deg, #2563eb, #06b6d4 62%, #14b8a6);
-  box-shadow: 0 0 28px rgb(34 211 238 / 0.34), inset 0 1px 0 rgb(255 255 255 / 0.4);
-}
 
 .quantum-nav-link {
   display: inline-flex;

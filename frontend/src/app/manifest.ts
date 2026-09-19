@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Quantum Learning Studio',
-    short_name: 'Quantum Studio',
+    short_name: 'Quantum Learning Studio',
     description: 'An AI-powered interactive quantum learning laboratory.',
     start_url: '/',
     display: 'standalone',
