@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -155,14 +156,16 @@ const [gamificationLoading, setGamificationLoading] =
         {/* Header/Logo */}
         <div className="flex h-16 items-center justify-between px-4 border-b border-border-color">
           <Link href="/" className="flex items-center gap-2 overflow-hidden">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-medium bg-primary-color text-white">
-              <Atom className="h-6 w-6 animate-pulse" />
+            <div className={`flex items-center justify-center shrink-0 overflow-hidden ${sidebarCollapsed ? 'h-10 w-10' : 'h-10 w-44'}`}>
+              <Image
+                src="/quantum-learning-logo.png"
+                alt="Quantum Learning Studio"
+                width={320}
+                height={80}
+                priority
+                className="h-10 w-auto max-w-none object-contain"
+              />
             </div>
-            {!sidebarCollapsed && (
-              <span className="font-sans font-bold text-lg leading-tight tracking-tight text-primary-color whitespace-nowrap">
-                Quantum Studio
-              </span>
-            )}
           </Link>
           <button
             onClick={toggleSidebar}
