@@ -391,7 +391,84 @@ export default function QuantumLab() {
 
           {/* LOWER SPLIT PANEL: Simulation results and "Why Mode" */}
           <div className="h-[min(40vh,20rem)] sm:h-64 border-t border-border-color bg-surface flex flex-col shrink-0 overflow-hidden">
-            {simulationResult ? (
+            {realSimulationError ? (
+              <div className="flex-1 flex flex-col items-center justify-center p-4 text-center gap-3">
+                <AlertTriangle className="text-error-color" size={32} />
+                <span className="font-bold text-body-small text-error-color">Quantum Simulation Failed</span>
+                <p className="text-caption text-text-secondary max-w-md">{realSimulationError}</p>
+              </div>
+            ) : realSimulationResult ? (
+              <div className="flex flex-col md:flex-row h-full divide-y md:divide-y-0 md:divide-x divide-border-color overflow-hidden">
+
+                {/* Real quantum backend probability results */}
+                <div className="flex-1 p-4 flex flex-col justify-between overflow-y-auto">
+                  <div className="flex justify-between items-center border-b border-border-color pb-1.5">
+                    <span className="text-caption font-bold text-text-secondary uppercase">Quantum Backend Results</span>
+                    <span className="text-[10px] text-text-secondary">
+                      Shots count: {realSimulationResult.shots}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 flex flex-col justify-center gap-2 pt-2">
+                    {Object.entries(realSimulationResult.probabilities).map(([state, prob]) => (
+                      <div key={state} className="flex items-center gap-3">
+                        <span className="font-mono text-caption w-10 text-right">{state}</span>
+                        <div className="flex-1 bg-background border border-border-color/30 h-4 rounded-pill overflow-hidden">
+                          <div
+                            className="bg-primary-color h-full transition-all duration-slow"
+                            style={{ width: `${prob * 100}%` }}
+                          />
+                        </div>
+                        <span className="font-mono text-caption w-12 font-bold">
+                          {(prob * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Real backend execution details */}
+                <div className="w-full md:w-[320px] p-4 flex flex-col justify-center overflow-y-auto shrink-0">
+                  <div className="border-b border-border-color pb-1.5 mb-3">
+                    <span className="text-caption font-bold text-primary-color tracking-wide uppercase">
+                      Execution Details
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-caption">
+                    <div className="flex justify-between gap-3">
+                      <span className="text-text-secondary">Backend</span>
+                      <span className="font-bold text-right">{realSimulationResult.backend}</span>
+                    </div>
+
+                    <div className="flex justify-between gap-3">
+                      <span className="text-text-secondary">Provider</span>
+                      <span className="font-bold text-right">{realSimulationResult.provider}</span>
+                    </div>
+
+                    <div className="flex justify-between gap-3">
+                      <span className="text-text-secondary">Shots</span>
+                      <span className="font-bold">{realSimulationResult.shots}</span>
+                    </div>
+
+                    <div className="flex justify-between gap-3">
+                      <span className="text-text-secondary">Execution time</span>
+                      <span className="font-bold">
+                        {realSimulationResult.execution_time_ms.toFixed(2)} ms
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between gap-3">
+                      <span className="text-text-secondary">Execution mode</span>
+                      <span className="font-bold">
+                        {realSimulationResult.local ? 'Local' : 'Cloud'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            ) : simulationResult ? (
               <div className="flex flex-col md:flex-row h-full divide-y md:divide-y-0 md:divide-x divide-border-color overflow-hidden">
                 
                 {/* Visual outputs: Probabilities histograms */}
